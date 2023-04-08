@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import AddPerson from "./components/AddPerson";
 import Contacts from "./components/Contacts";
-import noteService from "./services/persons";
+import personService from "./services/persons";
 import Notification from "./components/Notification";
 
 const App = () => {
@@ -14,8 +13,8 @@ const App = () => {
   const [Message, setMessage] = useState(null);
 
   useEffect(() => {
-    noteService.getAll().then((initialNotes) => {
-      setPersons(initialNotes);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -42,7 +41,7 @@ const App = () => {
       setTimeout(() => {
         setMessage(null);
       }, 5000);
-      noteService.create(personObject).then((returnedNote) => {
+      personService.create(personObject).then((returnedNote) => {
         setPersons(persons.concat(returnedNote));
         setNewName("");
         setNewNumber("");
@@ -51,9 +50,8 @@ const App = () => {
   };
 
   const handleDelete = (id, name) => {
-    const url = `http://localhost:3001/persons/${id}`;
     if (window.confirm("Delete this contact?")) {
-      axios.delete(url).then(() => {
+      personService.remove(id).then(() => {
         setPersons(persons.filter((person) => person.id !== id));
       });
       setMessage(`Deleted ${name}`);
